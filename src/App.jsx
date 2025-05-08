@@ -4,6 +4,7 @@ import axios from "axios";
 import "./App.css";
 
 function App() {
+  const apiKey = import.meta.env.VITE_OPENWEATHER_KEY;
   const [weatherData, setWeatherData] = useState(null);
   const [city, setCity] = useState("");
   const [error, setError] = useState(false);
@@ -13,10 +14,11 @@ function App() {
     const lastCity = localStorage.getItem("lastCity");
     if (lastCity) {
       setLastCity(lastCity);
-      axios
-        .get(
-          `https://api.openweathermap.org/data/2.5/forecast?q=${lastCity}&appid=8e7ab7f8e63d70c50df13a1e6edf5f22&units=metric&lang=pt_br`
-        )
+      axios.get(
+        `https://api.openweathermap.org/data/2.5/forecast?q=${lastCity}&appid=${apiKey}&units=metric&lang=pt_br`
+      );
+      console
+        .log(apiKey)
         .then((response) => {
           setWeatherData(response.data);
           setError(false);
@@ -33,7 +35,7 @@ function App() {
     if (city) {
       axios
         .get(
-          `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=8e7ab7f8e63d70c50df13a1e6edf5f22&units=metric&lang=pt_br`
+          `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric&lang=pt_br`
         )
         .then((response) => {
           setWeatherData(response.data);
