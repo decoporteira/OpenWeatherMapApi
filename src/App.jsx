@@ -1,10 +1,9 @@
-import React, { use } from "react";
+import React from "react";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import "./App.css";
+import { fetchWeather } from "./services/Api.jsx";
 
 function App() {
-  const apiKey = import.meta.env.VITE_OPENWEATHER_KEY;
   const [weatherData, setWeatherData] = useState(null);
   const [city, setCity] = useState("");
   const [error, setError] = useState(false);
@@ -14,39 +13,28 @@ function App() {
     const lastCity = localStorage.getItem("lastCity");
     if (lastCity) {
       setLastCity(lastCity);
-      axios.get(
-        `https://api.openweathermap.org/data/2.5/forecast?q=${lastCity}&appid=${apiKey}&units=metric&lang=pt_br`
-      );
-      console
-        .log(apiKey)
-        .then((response) => {
-          setWeatherData(response.data);
-          setError(false);
-        })
-        .catch((error) => {
-          console.error("Erro ao buscar dados da cidade:", error);
+      fetchWeather(lastCity).then(({ data, error }) => {
+        if (data) {
+          setWeatherData(data);
+        } else {
           setError(true);
-        });
+        }
+      });
     }
   }, []);
 
   function handleSubmit(e) {
     e.preventDefault();
     if (city) {
-      axios
-        .get(
-          `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric&lang=pt_br`
-        )
-        .then((response) => {
-          setWeatherData(response.data);
+      fetchWeather(city)
+        .then(({ data, error }) => {
+          setWeatherData(data);
           setCity("");
           setLastCity(city);
           localStorage.setItem("lastCity", city);
           setError(false);
-          console.log("Última cidade: " + city);
         })
         .catch((error) => {
-          console.error("Erro ao buscar dados da cidade:", error);
           setError(true);
         });
     } else {
